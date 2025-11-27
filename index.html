@@ -1,0 +1,198 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2575.7">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+  </style>
+</head>
+<body>
+<p class="p1">&lt;!DOCTYPE html&gt;</p>
+<p class="p1">&lt;html lang="en"&gt;</p>
+<p class="p1">&lt;head&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;meta charset="utf-8" /&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;meta name="viewport" content="width=device-width,initial-scale=1" /&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;title&gt;Thanksgiving Family Check In&lt;/title&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;!-- Firebase (modular) --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;script type="module"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";</p>
+<p class="p1"><span class="Apple-converted-space">    </span>import {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>getFirestore,</p>
+<p class="p1"><span class="Apple-converted-space">      </span>doc,</p>
+<p class="p1"><span class="Apple-converted-space">      </span>setDoc,</p>
+<p class="p1"><span class="Apple-converted-space">      </span>onSnapshot,</p>
+<p class="p1"><span class="Apple-converted-space">      </span>collection,</p>
+<p class="p1"><span class="Apple-converted-space">      </span>query,</p>
+<p class="p1"><span class="Apple-converted-space">      </span>orderBy</p>
+<p class="p1"><span class="Apple-converted-space">    </span>} from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>// ----- Your Firebase config (already provided) -----</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const firebaseConfig = {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>apiKey: "AIzaSyCMEIkhJzi3IYMpi29z4kOM9rvTx5vFIoc",</p>
+<p class="p1"><span class="Apple-converted-space">      </span>authDomain: "thanksgivingcheckin-99123.firebaseapp.com",</p>
+<p class="p1"><span class="Apple-converted-space">      </span>projectId: "thanksgivingcheckin-99123",</p>
+<p class="p1"><span class="Apple-converted-space">      </span>storageBucket: "thanksgivingcheckin-99123.firebasestorage.app",</p>
+<p class="p1"><span class="Apple-converted-space">      </span>messagingSenderId: "522733393759",</p>
+<p class="p1"><span class="Apple-converted-space">      </span>appId: "1:522733393759:web:356b4092fe36a191a848ea"</p>
+<p class="p1"><span class="Apple-converted-space">    </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>// initialize</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const app = initializeApp(firebaseConfig);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const db = getFirestore(app);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>// People &amp; Locations</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const PEOPLE = ["Lalita","Daniel","Yassi","Lance","Mom","Dad","Frank","Maddie","Toby","Andrea"];</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const LOCATIONS = [</p>
+<p class="p1"><span class="Apple-converted-space">      </span>{ name: "Park" },</p>
+<p class="p1"><span class="Apple-converted-space">      </span>{ name: "Sunny's", address: "110 NW 2nd St #106, Bentonville, AR 72712" },</p>
+<p class="p1"><span class="Apple-converted-space">      </span>{ name: "Crystal Bridges", address: "600 Museum Way, Bentonville, AR 72712" },</p>
+<p class="p1"><span class="Apple-converted-space">      </span>{ name: "House 1830", address: "106 W Elm St #102, Rogers, AR 72756" },</p>
+<p class="p1"><span class="Apple-converted-space">      </span>{ name: "Downtown Fayetteville" }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>];</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>// Build UI after load</p>
+<p class="p1"><span class="Apple-converted-space">    </span>window.addEventListener('DOMContentLoaded', () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const container = document.getElementById('locations');</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>LOCATIONS.forEach(loc =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const locBox = document.createElement('section');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>locBox.className = 'location';</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const addrHtml = loc.address</p>
+<p class="p1"><span class="Apple-converted-space">          </span>? `&lt;a class="addr-link" href="https://www.google.com/maps?q=${encodeURIComponent(loc.address)}" target="_blank" rel="noopener"&gt;${loc.address}&lt;/a&gt;`</p>
+<p class="p1"><span class="Apple-converted-space">          </span>: '';</p>
+<p class="p1"><span class="Apple-converted-space">        </span>locBox.innerHTML = `&lt;h2&gt;${loc.name}&lt;/h2&gt;${addrHtml}&lt;div class="people"&gt;&lt;/div&gt;`;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>container.appendChild(locBox);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>const peopleDiv = locBox.querySelector('.people');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>PEOPLE.forEach(person =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">          </span>// create person row</p>
+<p class="p1"><span class="Apple-converted-space">          </span>const row = document.createElement('div');</p>
+<p class="p1"><span class="Apple-converted-space">          </span>row.className = 'person';</p>
+<p class="p1"><span class="Apple-converted-space">          </span>row.innerHTML = `</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="person-name"&gt;${person}&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="controls"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;button id="btn_${escapeId(loc.name)}_${escapeId(person)}" class="check-btn"&gt;Check In&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>&lt;span id="status_${escapeId(loc.name)}_${escapeId(person)}" class="status"&gt;&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;`;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>peopleDiv.appendChild(row);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">          </span>const btn = row.querySelector('button');</p>
+<p class="p1"><span class="Apple-converted-space">          </span>btn.addEventListener('click', async () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>btn.disabled = true;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>btn.textContent = 'Checking...';</p>
+<p class="p1"><span class="Apple-converted-space">            </span>try {</p>
+<p class="p1"><span class="Apple-converted-space">              </span>// Use a deterministic doc id so multiple clicks don't create duplicates:</p>
+<p class="p1"><span class="Apple-converted-space">              </span>const docId = `${loc.name}__${person}`;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>await setDoc(doc(db, 'checkins', docId), {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>location: loc.name,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>name: person,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>timestamp: new Date().toISOString()</p>
+<p class="p1"><span class="Apple-converted-space">              </span>});</p>
+<p class="p1"><span class="Apple-converted-space">            </span>} catch (err) {</p>
+<p class="p1"><span class="Apple-converted-space">              </span>console.error('Save failed', err);</p>
+<p class="p1"><span class="Apple-converted-space">              </span>alert('Failed to save. Check console.');</p>
+<p class="p1"><span class="Apple-converted-space">              </span>btn.disabled = false;</p>
+<p class="p1"><span class="Apple-converted-space">              </span>btn.textContent = 'Check In';</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">          </span>});</p>
+<p class="p1"><span class="Apple-converted-space">        </span>});</p>
+<p class="p1"><span class="Apple-converted-space">      </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>// Real-time listener: update buttons/status as Firestore changes</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const q = query(collection(db, 'checkins'), orderBy('timestamp','desc'));</p>
+<p class="p1"><span class="Apple-converted-space">      </span>onSnapshot(q, snapshot =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>// reset all statuses/buttons</p>
+<p class="p1"><span class="Apple-converted-space">        </span>PEOPLE.forEach(person =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">          </span>LOCATIONS.forEach(loc =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const statusEl = document.getElementById(`status_${escapeId(loc.name)}_${escapeId(person)}`);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const btn = document.getElementById(`btn_${escapeId(loc.name)}_${escapeId(person)}`);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (statusEl) statusEl.textContent = '';</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (btn) { btn.disabled = false; btn.textContent = 'Check In' }</p>
+<p class="p1"><span class="Apple-converted-space">          </span>});</p>
+<p class="p1"><span class="Apple-converted-space">        </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>// mark checked-in ones</p>
+<p class="p1"><span class="Apple-converted-space">        </span>snapshot.forEach(docSnap =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">          </span>const d = docSnap.data();</p>
+<p class="p1"><span class="Apple-converted-space">          </span>if (!d || !d.name || !d.location) return;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>const statusEl = document.getElementById(`status_${escapeId(d.location)}_${escapeId(d.name)}`);</p>
+<p class="p1"><span class="Apple-converted-space">          </span>const btn = document.getElementById(`btn_${escapeId(d.location)}_${escapeId(d.name)}`);</p>
+<p class="p1"><span class="Apple-converted-space">          </span>if (statusEl) statusEl.textContent = '✅ Checked In';</p>
+<p class="p1"><span class="Apple-converted-space">          </span>if (btn) { btn.disabled = true; btn.textContent = '✅ Checked In' }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>});</p>
+<p class="p1"><span class="Apple-converted-space">      </span>});</p>
+<p class="p1"><span class="Apple-converted-space">    </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>// helper for safe id creation (replace spaces/special chars)</p>
+<p class="p1"><span class="Apple-converted-space">    </span>function escapeId(s) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>return String(s).replace(/\s+/g,'_').replace(/[^\w\-]/g,'');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/script&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;!-- Styling --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;style&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>:root{</p>
+<p class="p1"><span class="Apple-converted-space">      </span>--card-bg: rgba(255,255,255,0.9);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>--accent: #b34d00;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>--btn: #ff9933;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>html,body{height:100%;margin:0}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>body{</p>
+<p class="p1"><span class="Apple-converted-space">      </span>font-family: "Helvetica Neue", Arial, sans-serif;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>background: linear-gradient(135deg,#ffb347,#ffcc33);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>/* if you have a background image file, place it next to index.html and uncomment below:</p>
+<p class="p1"><span class="Apple-converted-space">         </span>background-image: url('your-background.png'), linear-gradient(...);</p>
+<p class="p1"><span class="Apple-converted-space">         </span>background-size: cover, auto;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>*/</p>
+<p class="p1"><span class="Apple-converted-space">      </span>padding: 24px;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>display:flex;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>flex-direction:column;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>align-items:center;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>h1{</p>
+<p class="p1"><span class="Apple-converted-space">      </span>font-family: "Brush Script MT", "Segoe Script", cursive;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>font-size:36px;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>color:#fff7e6;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>text-shadow: 1px 1px 3px rgba(0,0,0,0.25);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>margin:6px 0 18px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>#locations{width:100%;max-width:900px}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.location{</p>
+<p class="p1"><span class="Apple-converted-space">      </span>background:var(--card-bg);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>border-radius:12px;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>padding:14px 18px;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>margin:12px 0;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>box-shadow:0 4px 10px rgba(0,0,0,0.12);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.location h2{margin:0 0 8px;color:var(--accent);}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.addr-link{display:block;margin-bottom:8px;color:#1a73e8;text-decoration:none}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.addr-link:hover{text-decoration:underline}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.people{display:flex;flex-direction:column;gap:6px}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.person{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-top:1px solid rgba(0,0,0,0.05)}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.person:first-child{border-top:0}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.person-name{font-family:Arial,Helvetica,sans-serif}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.controls{display:flex;gap:8px;align-items:center}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.check-btn{background:var(--btn);border:0;color:white;padding:6px 10px;border-radius:8px;cursor:pointer}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.check-btn:disabled{background:gray;cursor:default}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.status{font-weight:600;color:green}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>/* responsive */</p>
+<p class="p1"><span class="Apple-converted-space">    </span>@media (max-width:520px){</p>
+<p class="p1"><span class="Apple-converted-space">      </span>.person{flex-direction:column;align-items:flex-start;gap:6px}</p>
+<p class="p1"><span class="Apple-converted-space">      </span>.controls{align-self:stretch;justify-content:space-between;width:100%}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/style&gt;</p>
+<p class="p1">&lt;/head&gt;</p>
+<p class="p1">&lt;body&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;h1&gt;Thanksgiving Family Check In&lt;/h1&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div id="locations"&gt;&lt;/div&gt;</p>
+<p class="p1">&lt;/body&gt;</p>
+<p class="p1">&lt;/html&gt;</p>
+</body>
+</html>
