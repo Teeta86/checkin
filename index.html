@@ -1,3 +1,4 @@
+{"variant":"standard","title":"Thanksgiving Family Check-In HTML","id":"65421"}
 <!DOCTYPE html>
 <html>
 <head>
@@ -63,6 +64,7 @@
     .status {
       font-weight: bold;
       color: #5a2c00;
+      margin-right: 10px;
     }
 
     a {
@@ -83,31 +85,26 @@
   <h2>Locations</h2>
   <ul>
     <li><strong>Park</strong></li>
-
     <li><strong>Sunny's</strong> — <a target="_blank" href="https://maps.google.com/?q=110 NW 2nd St #106, Bentonville, AR 72712">110 NW 2nd St #106, Bentonville, AR 72712</a></li>
-
     <li><strong>Crystal Bridges</strong> — <a target="_blank" href="https://maps.google.com/?q=600 Museum Way, Bentonville, AR 72712">600 Museum Way, Bentonville, AR 72712</a></li>
-
     <li><strong>House 1830</strong> — <a target="_blank" href="https://maps.google.com/?q=106 W Elm St #102, Rogers, AR 72756">106 W Elm St #102, Rogers, AR 72756</a></li>
-
     <li><strong>Downtown Fayetteville</strong></li>
   </ul>
 
   <h2>Family Check In</h2>
-
   <div id="peopleList"></div>
 </div>
 
 <!-- Firebase SDK -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getFirestore, doc, setDoc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyCMEIkhJzi3IYMpi29z4kOM9rvTx5vFIoc",
     authDomain: "thanksgivingcheckin-99123.firebaseapp.com",
     projectId: "thanksgivingcheckin-99123",
-    storageBucket: "thanksgivingcheckin-99123.firebasestorage.app",
+    storageBucket: "thanksgivingcheckin-99123.appspot.com",
     messagingSenderId: "522733393759",
     appId: "1:522733393759:web:356b4092fe36a191a848ea"
   };
@@ -121,4 +118,38 @@
     "Toby", "Andrea"
   ];
 
-  cons
+  const peopleList = document.getElementById('peopleList');
+
+  names.forEach(name => {
+    const personDiv = document.createElement('div');
+    personDiv.classList.add('person');
+
+    const nameSpan = document.createElement('span');
+    nameSpan.textContent = name;
+
+    const statusSpan = document.createElement('span');
+    statusSpan.classList.add('status');
+    statusSpan.textContent = 'Not checked in';
+
+    const checkinBtn = document.createElement('button');
+    checkinBtn.textContent = 'Check In';
+    checkinBtn.addEventListener('click', async () => {
+      await setDoc(doc(db, "checkins", name), { checkedIn: true });
+    });
+
+    personDiv.appendChild(nameSpan);
+    personDiv.appendChild(statusSpan);
+    personDiv.appendChild(checkinBtn);
+    peopleList.appendChild(personDiv);
+
+    const docRef = doc(db, "checkins", name);
+    onSnapshot(docRef, (docSnap) => {
+      if (docSnap.exists() && docSnap.data().checkedIn) {
+        statusSpan.textContent = 'Checked in';
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
