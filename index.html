@@ -96,6 +96,7 @@
 </div>
 
 <!-- Firebase SDK -->
+{"variant":"standard","title":"Firebase Check In/Out Script","id":"65422"}
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -137,19 +138,27 @@
       await setDoc(doc(db, "checkins", name), { checkedIn: true });
     });
 
+    const checkoutBtn = document.createElement('button');
+    checkoutBtn.textContent = 'Check Out';
+    checkoutBtn.style.backgroundColor = '#4CAF50'; // green for checkout
+    checkoutBtn.style.marginLeft = '10px';
+    checkoutBtn.addEventListener('click', async () => {
+      await setDoc(doc(db, "checkins", name), { checkedIn: false });
+    });
+
     personDiv.appendChild(nameSpan);
     personDiv.appendChild(statusSpan);
     personDiv.appendChild(checkinBtn);
+    personDiv.appendChild(checkoutBtn);
     peopleList.appendChild(personDiv);
 
     const docRef = doc(db, "checkins", name);
     onSnapshot(docRef, (docSnap) => {
       if (docSnap.exists() && docSnap.data().checkedIn) {
         statusSpan.textContent = 'Checked in';
+      } else {
+        statusSpan.textContent = 'Not checked in';
       }
     });
   });
 </script>
-
-</body>
-</html>
