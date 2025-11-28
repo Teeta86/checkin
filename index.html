@@ -48,7 +48,7 @@
 
     button {
       padding: 8px 14px;
-      background-color: #ff7b2e;
+      background-color: #4CAF50;
       border: none;
       border-radius: 8px;
       color: white;
@@ -57,7 +57,7 @@
     }
 
     button:hover {
-      background-color: #ff6a10;
+      background-color: #4CAF50;
     }
 
     .status {
@@ -83,10 +83,12 @@
 <div class="container">
   <h2>Locations</h2>
   <ul>
-    <li><strong>Park</strong></li>
-    <li><strong>Sunny's</strong> — <a target="_blank" href="https://maps.google.com/?q=110 NW 2nd St #106, Bentonville, AR 72712">110 NW 2nd St #106, Bentonville, AR 72712</a></li>
-    <li><strong>Crystal Bridges</strong> — <a target="_blank" href="https://maps.google.com/?q=600 Museum Way, Bentonville, AR 72712">600 Museum Way, Bentonville, AR 72712</a></li>
-    <li><strong>House 1830</strong> — <a target="_blank" href="https://maps.google.com/?q=106 W Elm St #102, Rogers, AR 72756">106 W Elm St #102, Rogers, AR 72756</a></li>
+    <li><strong>10AM - Onyx Coffee Lab (Rogers)</strong></li>
+    <li><strong>11AM - Playground</strong></li>
+    <li><strong>12-12:30AM - Sunny's</strong> — <a target="_blank" href="https://maps.google.com/?q=110 NW 2nd St #106, Bentonville, AR 72712">110 NW 2nd St #106, Bentonville, AR 72712</a></li>
+    <li><strong>2PM - Crystal Bridges</strong> — <a target="_blank" href="https://maps.google.com/?q=600 Museum Way, Bentonville, AR 72712">600 Museum Way, Bentonville, AR 72712</a></li>
+    <li><strong>5:30PM - Lights at Crystal Bridges</strong></li>
+    <li><strong>7:15PM - House 1830</strong> — <a target="_blank" href="https://maps.google.com/?q=106 W Elm St #102, Rogers, AR 72756">106 W Elm St #102, Rogers, AR 72756</a></li>
     <li><strong>Downtown Fayetteville</strong></li>
   </ul>
 
@@ -138,7 +140,7 @@
 
     const checkoutBtn = document.createElement('button');
     checkoutBtn.textContent = 'Check Out';
-    checkoutBtn.style.backgroundColor = '#4CAF50'; // green for checkout
+    checkoutBtn.style.backgroundColor = '#ff7b2e'; // orange for checkout
     checkoutBtn.style.marginLeft = '10px';
     checkoutBtn.addEventListener('click', async () => {
       await setDoc(doc(db, "checkins", name), { checkedIn: false });
